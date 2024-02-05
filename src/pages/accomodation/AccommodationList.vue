@@ -8,14 +8,16 @@
           :to="{ name: 'accommodationDetails', params: { id: accommodation.id }}"
           class="block relative overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-transform transform hover:scale-105"
         >
-          <img
-            :src="`/images/${accommodation.id}.jpg`" 
-            :alt="accommodation.name"
-            class="w-full h-48 object-cover"
-          />
+         <img
+  :src="accommodation.image_url"
+  :alt="accommodation.name"
+  class="w-full h-48 object-cover"
+/>
           <div class="p-4">
             <h2 class="text-xl font-semibold mb-2">{{ accommodation.name }}</h2>
-            <!-- You can add more details here -->
+            <!-- Add more details if needed -->
+            <p class="text-gray-700">{{ accommodation.description }}</p>
+            <p class="text-gray-600 mt-2">${{ accommodation.standard_rack_rate }}</p>
           </div>
         </router-link>
       </div>
@@ -24,13 +26,20 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
 
-const accommodations = ref([
-    { id: 1, name: 'Modern Suite' },
-    { id: 2, name: 'Luxury Villa' },
-    // Add more accommodations as needed
-    ]);
+const accommodations = ref([]);
+
+onMounted(async () => {
+  try {
+    const response = await axios.get('/api/accommodations'); // Update the endpoint based on your Laravel routes
+    accommodations.value = response.data;
+  } catch (error) {
+    console.error('Error fetching accommodations:', error);
+    // Handle errors as needed
+  }
+});
 </script>
 
 <style scoped>

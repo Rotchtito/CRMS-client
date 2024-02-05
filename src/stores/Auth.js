@@ -4,6 +4,7 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 import { defineStore } from "pinia";
 
 
+
 export const useAuthStore = defineStore('auth',{
   state: () => ({
     user: null,
@@ -16,7 +17,6 @@ export const useAuthStore = defineStore('auth',{
     authError:null,
     authStatus: null,
     messages:null,
-
 
     errors: {
       first_name: null,
@@ -35,56 +35,69 @@ export const useAuthStore = defineStore('auth',{
 
   actions: {
 
-    async getToken() {
-      await axios.get('/sanctum/csrf-cookie').then(() => {
-        // CSRF cookie has been set
-      });
-    },
+
     
 
-    // LOGIN THE USER
+
+
     async login(data) {
-    await this.getToken();
-      this.isLoading = true
+      this.isLoading = true;
       try {
+        console.log("start:");
         const response = await axios.post('/api/login', {
           email: data.email,
           password: data.password,
-        })
-        this.isLoading = false
-        this.refreshToken = response.data.refresh_token
-        this.token = response.data.authToken
-        this.user = response.data.user
-        this.isAuthenticated = true
-        this.authError = response.data.error
-    
-        localStorage.setItem('token', this.token)
-    
-        if (this.authError == null && this.user.role == 'admin') {
-          this.router.push('/admin-dashboard')
-        } else if (this.authError == null && this.user.role == 'agent' ) {
-          this.router.push('/agent-dashboard')
+        });
+
+
+        console.log("User data from server is :" +response);
+        // Check if response and response.data are defined
+        if (response) {
+          console.log("1");
+          // Destructure the response for better readability
+          const user= response.data.data.user;
+          console.log("2");
+          const token= response.data.data.access_token.token;
+          console.log("3");
+          this.isAuthenticated = true;
+          console.log("4");
+
+          localStorage.setItem('token', token);
+          console.log("5");
+          // Use === for strict equality
+          if (user.role === 'admin') {
+            console.log("6");
+           await this.router.push('/admin-dashboard');
+           console.log("7");
+          } else if (user.role === 'travel_agent') {
+            await this.router.push('/agent/bookings');
+          } else {
+            await this.router.push('/login');
+          }
         } else {
-          this.router.push('/login')
+          // Handle the case where response or response.data is undefined
+          console.error('Invalid response format:', response);
         }
       } catch (error) {
-        const errorMessage = error.response.data.message;
+        const errorMessage = error.response?.data?.message || 'An error occurred';
         Swal.fire({
           position: 'center',
           icon: 'error',
           title: errorMessage,
           showConfirmButton: false,
-          timer: 2000
-        })
-        this.isLoading = false
-      
-        
+          timer: 2000,
+        });
+
+        this.isLoading = false;
       }
     },
 
+
+
+
+
 // REGISTER Agent
     async handleRegisterAgent(data) {
-      await this.getToken();
       this.authErrors = [];
       this.isLoading=true
       try {
@@ -100,7 +113,7 @@ export const useAuthStore = defineStore('auth',{
         });
         this.isLoading=false
         this.authError = null
-        this.router.push("/login");
+         this.router.push("/login");
       } catch (error) {
         this.isLoading = false;
         const errorResponse = error.response.data;
