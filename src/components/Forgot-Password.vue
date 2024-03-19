@@ -1,7 +1,7 @@
 <script setup>
 
 import { ref } from "vue";
-import { useAuthStore } from "../stores/auth";
+import { useAuthStore } from "../stores/Auth";
 
 const authStore = useAuthStore();
 const email = ref("");

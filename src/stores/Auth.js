@@ -72,8 +72,8 @@ export const useAuthStore = defineStore('auth',{
       }
     },
 
-    // REGISTER Agent
-    async handleRegisterAgent(data) {
+    // REGISTER Police
+    async handleRegisterPolice(data) {
       this.authErrors = [];
       this.isLoading = true;
 
@@ -100,7 +100,7 @@ export const useAuthStore = defineStore('auth',{
             timer: 2000,
           });
 
-          window.location.href = '/login';
+          window.location.href = '/';
         } else {
           console.error('Invalid response format:', response);
         }
@@ -150,13 +150,13 @@ export const useAuthStore = defineStore('auth',{
         this.isAuthenticated = false
         this.isLoading=false
         this.user=null
-        this.router.push("/login");
+        this.router.push("/");
       } catch (error) {
         console.log(error)
       } finally {
         this.isLoading=false
         this.isAuthenticated = false
-        this.router.push("/login");
+        this.router.push("/");
         // localStorage.removeItem('user')
         // localStorage.removeItem('token')
         // localStorage.removeItem('refreshToken')
@@ -189,7 +189,7 @@ export const useAuthStore = defineStore('auth',{
       try {
         const response = await axios.post("/api/change-password", resetData);
         this.authStatus = response.data.status;
-        this.router.push("/login");
+        this.router.push("/");
       } catch (error) {
         if (error.response.status === 422) {
           this.authErrors = error.response.data.errors;

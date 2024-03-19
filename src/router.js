@@ -1,37 +1,23 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import LandingPage from './components/LandingPage.vue';
-import About from './components/About.vue';
 import Login from './components/Login.vue';
 import Register from './components/Register.vue';
 import ForgotPassword from './components/Forgot-Password.vue';
-import AccommodationList from './pages/accomodation/AccommodationList.vue';
-import AccommodationDetails from './pages/accomodation/AccommodationDetails.vue';
-import BookingForm from './pages/accomodation/BookingForm.vue';
-import AdminDashboard from './pages/admin/AdminDashboard.vue';
-import AdminViewBookings from './pages/admin/AdminViewBookings.vue';
-import AdminViewAgents from './pages/admin/AdminViewAgents.vue';
+import Profile from './pages/Profile.vue';
+import Dashboard from './pages/dashboard/Dashboard.vue';
+import Suspects from './pages/suspects/Suspects.vue';
+import Complainants from './pages/complainants/Complainants.vue';
+import Complaints from './pages/complaints/Complaints.vue';
 
+import AddCase from './pages/police/AddCase.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: LandingPage,
-      meta: { requiresAuth: false }
-    },
-    {
-      path: '/about',
-      name: 'about',
-      component: About,
-      meta: { requiresAuth: false }
-    },
-    {
-      path: '/login',
       name: 'login',
       component: Login,
-      meta: { requiresAuth: false }
+      meta: { requiresAuth:false }
     },
     {
       path: '/register',
@@ -43,68 +29,69 @@ const router = createRouter({
       path: '/forgot-password',
       name: 'forgot-password',
       component: ForgotPassword,
-      meta: { requiresAuth: false }
-    },
-    
-    //private routes
-    {
-      path: '/accommodations',
-      name: 'accommodationList',
-      component: AccommodationList,
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: false}
     },
     {
-      path: '/accommodation/:id',
-      name: 'accommodationDetails',
-      component: AccommodationDetails,
-      props: true,
-      meta: { requiresAuth: true }
-    },
-    {
-      path: '/booking-form',
-      name: 'bookingForm',
-      component: BookingForm,
-      meta: { requiresAuth: true }
+      path: '/profile',
+      name: 'profile',
+      component: Profile,
+      meta: { requiresAuth: true } // Update to false if authentication is required
     },
     {
       path: '/dashboard',
       name: 'dashboard',
-      component: AdminDashboard,
+      component: Dashboard,
+      meta: { requiresAuth: true } // Update to true if authentication is required
     },
     {
-      path: '/bookings',
-      name: 'adminbookings',
-      component: AdminViewBookings,
-      meta: { requiresAuth: true }
+      path: '/suspects',
+      name: 'suspects',
+      component: Suspects,
+      meta: { requiresAuth: true } // Update to true if authentication is required
+    },
+ 
+    {
+      path: '/add/case',
+      name: 'addcase',
+      component: AddCase,
+      meta: { requiresAuth: true } // Update to true if authentication is required
     },
     {
-      path: '/agents',
-      name: 'adminagent',
-      component: AdminViewAgents,
-      meta: { requiresAuth: true }
+      path: '/complainants',
+      name: 'complainants',
+      component: Complainants,
+      meta: { requiresAuth: true } // Update to false if authentication is required
     },
-
-
+    {
+      path: '/complaints',
+      name: 'complaints',
+      component: Complaints,
+      meta: { requiresAuth: true } // Update to false if authentication is required
+    },
     ]
 });
 
-
-
 // Global before guard for authentication
 router.beforeEach((to, from, next) => {
-  // Hardcoded for testing purposes
-  const isAuthenticated = true;
+  // Check if user and tokens are in local storage
+  const user = JSON.parse(localStorage.getItem('user'));
+  const token = localStorage.getItem('token');
+  const isAuthenticated = user && token;
 
-  console.log('Navigation to', to.path, 'requiresAuth:', to.meta.requiresAuth, 'isAuthenticated:', isAuthenticated);
+  // Check if there are matched routes and if the meta field exists
+  const requiresAuth = to.matched.length > 0 ? to.matched[0].meta.requiresAuth : false;
 
-  if (to.meta.requiresAuth && !isAuthenticated) {
+  console.log('Navigation to', to.path, 'requiresAuth:', requiresAuth, 'isAuthenticated:', isAuthenticated);
+
+  if (requiresAuth && !isAuthenticated) {
     // Redirect to the login page if authentication is required and the user is not authenticated
     console.log('Redirecting to /login');
-    next('/login');
+    next('/');
   } else {
     // Continue with the navigation
     console.log('Continuing with navigation');
     next();
   }
 });
+
 export default router;

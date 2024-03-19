@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { useAuthStore } from '../stores/auth'
+import { useAuthStore } from "../stores/Auth";
 
 const authStore = useAuthStore();
 
@@ -36,8 +36,8 @@ const form = ref({
             "
           >
           <div class="bg-red-500 text-center rounded-lg py-1 text-white mb-3" v-if="authStore.errors.phone_number" >{{ authStore.errors.phone_number }}</div>
-            <div class="mb-10 text-center md:mb-16">Create Agent Account </div>
-            <form @submit.prevent="authStore.handleRegisterAgent(form)">
+            <div class="mb-10 text-center md:mb-16">Create Police Account </div>
+            <form @submit.prevent="authStore.handleRegisterPolice(form)">
               <div class="mb-6">
                 <input
                   type="text"

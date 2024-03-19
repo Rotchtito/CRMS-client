@@ -1,6 +1,6 @@
 
 <script setup>
-import { useAuthStore } from '../stores/auth'
+import { useAuthStore } from "../stores/Auth";
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
 
@@ -55,7 +55,7 @@ const showLoginError = () => {
                   }}</span>
                 </div>
 
-            <div class="mb-10 text-center md:mb-16"> Travel Agents and Accommodation</div>
+            <div class="mb-10 text-center md:mb-16"> Machakos Police Station</div>
 
 
             <form @submit.prevent="async () => {
@@ -152,12 +152,7 @@ const showLoginError = () => {
             >
               Forgot Password?
             </router-link>
-            <p class="text-base text-[#adadad]">
-              Not a member yet?
-              <router-link to="/register" class="text-primary hover:underline">
-                Sign Up 
-              </router-link>
-            </p>
+
 
           </div>
         </div>
