@@ -4,7 +4,7 @@
     <div v-if="userRole === 'police'" class="text-2xl font-semibold mb-4">Police</div>
     <ul class="space-y-2">
       <li @click="navigateTo('dashboard')" class="nav-item bg-blue-700 hover:bg-blue-700">Dashboard</li>
-      <li v-if="userRole == 'admin'" @click="navigateTo('police')" class="nav-item bg-blue-700 hover:bg-blue-700">Police</li>
+      <li v-if="userRole === 'admin'" @click="navigateTo('police')" class="nav-item bg-blue-700 hover:bg-blue-700">Police</li>
       <li @click="navigateTo('suspects')" class="nav-item bg-blue-700 hover:bg-blue-700">Suspects</li>
       <li @click="navigateTo('complainants')" class="nav-item bg-blue-700 hover:bg-blue-700">Complainants</li>
       <li @click="navigateTo('complaints')" class="nav-item bg-blue-700 hover:bg-blue-700">Cases</li>
@@ -22,10 +22,8 @@ const navigateTo = (route) => {
   router.push({ name: route });
 };
 
-const userRole = () => {
-  const user = JSON.parse(localStorage.getItem('user')) || {};
-  return user.role || '';
-};
+const user = JSON.parse(localStorage.getItem('user')) || {};
+const userRole = user.role || '';
 </script>
 
 <style scoped>

@@ -7,6 +7,8 @@ import Dashboard from './pages/dashboard/Dashboard.vue';
 import Suspects from './pages/suspects/Suspects.vue';
 import Complainants from './pages/complainants/Complainants.vue';
 import Complaints from './pages/complaints/Complaints.vue';
+import Police from './pages/admin/Police.vue';
+import AddPolice from './pages/admin/AddPolice.vue';
 
 import AddCase from './pages/police/AddCase.vue'
 
@@ -41,6 +43,18 @@ const router = createRouter({
       path: '/dashboard',
       name: 'dashboard',
       component: Dashboard,
+      meta: { requiresAuth: true } // Update to true if authentication is required
+    },
+    {
+      path: '/police',
+      name: 'police',
+      component:Police,
+      meta: { requiresAuth: true } // Update to true if authentication is required
+    },
+    {
+      path: '/add/police',
+      name: 'addPolice',
+      component: AddPolice,
       meta: { requiresAuth: true } // Update to true if authentication is required
     },
     {
