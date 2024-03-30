@@ -85,7 +85,29 @@ function toggleStatusDropdown(id) {
 
 async function updateStatus(id, status) {
   try {
-    const response = await axios.put(`http://localhost:8000/api/complaints/${id}`, { status });
+    const caseItem = cases.value.find(item => item.id === id);
+    const payload = {
+      id: caseItem.id,
+      title: caseItem.title,
+      description: caseItem.description,
+      complainant: {
+        id: caseItem.complainant.id,
+        name: caseItem.complainant.name,
+        email: caseItem.complainant.email, // Include complainant email
+        phone: caseItem.complainant.phone
+      },
+      suspect: caseItem.suspect ? {
+        name: caseItem.suspect.name
+      } : null,
+      police_in_charge: caseItem.police_in_charge ? {
+        first_name: caseItem.police_in_charge.first_name
+      } : null,
+      video_path: caseItem.video_path,
+      status: status
+    };
+
+    const response = await axios.put(`http://localhost:8000/api/complaints/${id}`, payload);
+
     const updatedCaseIndex = cases.value.findIndex(caseItem => caseItem.id === id);
     if (updatedCaseIndex !== -1) {
       cases.value[updatedCaseIndex].status = status;
@@ -95,6 +117,7 @@ async function updateStatus(id, status) {
     console.error('Error updating status:', error);
   }
 }
+
 </script>
 
 <style>
