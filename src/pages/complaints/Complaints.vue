@@ -5,7 +5,7 @@
     <div class="flex-1 p-4">
       <h2 class="text-2xl font-semibold mb-4">Saved Cases</h2>
       <div class="flex justify-end">
-            <router-link to="/add/case" class="bg-blue-500 text-white text-end mb-2 px-4 py-2 rounded-md shadow-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-300">Add new Case</router-link>
+        <router-link to="/add/case" class="bg-blue-500 text-white text-end mb-2 px-4 py-2 rounded-md shadow-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-300">Add new Case</router-link>
       </div>
       <div v-if="cases.length === 0" class="text-gray-500">No cases found.</div>
       <div v-else>
@@ -20,6 +20,7 @@
               <th class="px-4 py-2">Complainant Phone</th>
               <th class="px-4 py-2">Suspect</th>
               <th class="px-4 py-2">Police in Charge</th>
+              <th class="px-4 py-2">Video</th> <!-- New column for video -->
               <th class="px-4 py-2">Actions</th> <!-- New column for actions -->
             </tr>
           </thead>
@@ -32,17 +33,24 @@
               <td class="px-4 py-2">{{ caseItem.complainant.email }}</td>
               <td class="px-4 py-2">{{ caseItem.complainant.phone }}</td>
               <td class="px-4 py-2">{{ caseItem.suspect ? caseItem.suspect.name : '-' }}</td>
-              <td class="px-4 py-2">{{ caseItem.police_in_charge ? caseItem.police_in_charge.first_name: '-' }}</td>
+              <td class="px-4 py-2">{{ caseItem.police_in_charge ? caseItem.police_in_charge.first_name : '-' }}</td>
+              <td class="px-4 py-2">
+              <video v-if="caseItem.video_path" width="200" controls>
+  <source :src="caseItem.video_path" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+<span v-else>No video available</span>
+
+              </td>
               <td class="px-4 py-2">
                 <div class="relative">
                   <button @click="toggleStatusDropdown(caseItem.id)" class="py-2 px-4 bg-blue-500 text-white rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300">Change Status</button>
                   <!-- Dropdown menu -->
-                <div v-if="statusDropdownId === caseItem.id" class="absolute top-10 right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-md z-10">
-  <button @click="updateStatus(caseItem.id, 'pending')" class="block w-full text-left px-4 py-2 hover:bg-gray-100">Pending</button>
-  <button @click="updateStatus(caseItem.id, 'processing')" class="block w-full text-left px-4 py-2 hover:bg-gray-100">Processing</button>
-  <button @click="updateStatus(caseItem.id, 'resolved')" class="block w-full text-left px-4 py-2 hover:bg-gray-100">Resolved</button>
-</div>
-
+                  <div v-if="statusDropdownId === caseItem.id" class="absolute top-10 right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-md z-10">
+                    <button @click="updateStatus(caseItem.id, 'pending')" class="block w-full text-left px-4 py-2 hover:bg-gray-100">Pending</button>
+                    <button @click="updateStatus(caseItem.id, 'processing')" class="block w-full text-left px-4 py-2 hover:bg-gray-100">Processing</button>
+                    <button @click="updateStatus(caseItem.id, 'resolved')" class="block w-full text-left px-4 py-2 hover:bg-gray-100">Resolved</button>
+                  </div>
                 </div>
               </td>
             </tr>
@@ -52,6 +60,7 @@
     </div>
   </div>
 </template>
+
 
 <script setup>
 import { ref, onMounted } from 'vue';

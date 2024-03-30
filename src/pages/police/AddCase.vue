@@ -13,13 +13,13 @@
           <label for="description" class="block mb-2 mt-4">Description:</label>
           <textarea id="description" v-model="description" required rows="4" class="input-style"></textarea>
 
-          <!-- evidence -->
-          <h2 class="text-xl font-semibold mb-2">Evidence</h2>
-          <div v-for="(item, index) in evidence" :key="index" class="mb-2">
-            <input type="text" v-model="evidence[index]" :placeholder="'Evidence ' + (index + 1)" class="input-style">
-          </div>
-          <button type="button" @click="addEvidence" class="block text-blue-600 hover:text-blue-700 focus:outline-none focus:text-blue-700">Add Evidence</button>
-        </div>
+           <!-- Evidence -->
+  <h2 class="text-xl font-semibold mb-2">Evidence</h2>
+  <div v-for="(item, index) in evidence" :key="index" class="mb-2">
+    <input type="file" @change="handleFileChange($event, index)" accept="video/*" class="input-style">
+  </div>
+  <button type="button" @click="addEvidence" class="block text-blue-600 hover:text-blue-700 focus:outline-none focus:text-blue-700">Add Evidence</button>
+</div>
 
         <!-- Complainant Information -->
         <div>
@@ -77,31 +77,47 @@ const suspectDescription = ref('');
 const suspectAddress = ref('');
 const evidence = ref([]);
 
+// Function to handle file change and store in evidence array
+function handleFileChange(event, index) {
+  const file = event.target.files[0];
+  evidence.value[index] = file;
+}
+
 async function submitCase() {
   try {
+    // Create a FormData object
+    const formData = new FormData();
+
+    // Add form data
+    formData.append('title', title.value);
+    formData.append('description', description.value);
+    formData.append('complainantName', complainantName.value);
+    formData.append('complainantEmail', complainantEmail.value);
+    formData.append('complainantPhone', complainantPhone.value);
+    formData.append('complainantAddress', complainantAddress.value);
+    formData.append('suspectName', suspectName.value);
+    formData.append('suspectAge', suspectAge.value);
+    formData.append('suspectDescription', suspectDescription.value);
+    formData.append('suspectAddress', suspectAddress.value);
+    
+  // Append each video file to the FormData with the key 'evidence[]'
+evidence.value.forEach((file, index) => {
+  formData.append(`evidence[${index}]`, file);
+});
+
+
     // Retrieve the user object from local storage
     const storedUser = JSON.parse(localStorage.getItem('user'));
     // Extract the police ID from the user object
     const policeId = storedUser.id;
-    
-
-    const formData = {
-      title: title.value,
-      description: description.value,
-      complainantName: complainantName.value,
-      complainantEmail: complainantEmail.value,
-      complainantPhone: complainantPhone.value,
-      complainantAddress: complainantAddress.value,
-      suspectName: suspectName.value,
-      suspectAge: suspectAge.value,
-      suspectDescription: suspectDescription.value,
-      suspectAddress: suspectAddress.value,
-      evidence: evidence.value,
-      police_in_charge_id: policeId, // Include the ID of the police in charge
-    };
+    formData.append('police_in_charge_id', policeId);
 
     // Make POST request using Axios
-    const response = await axios.post('http://localhost:8000/api/complaints', formData);
+    const response = await axios.post('http://localhost:8000/api/complaints', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data', // Set content type to multipart/form-data
+      },
+    });
 
     // Handle successful response
     window.location.href = '/complaints';
@@ -112,9 +128,11 @@ async function submitCase() {
   }
 }
 
+
 function addEvidence() {
   evidence.value.push('');
 }
+
 </script>
 
 <style>
